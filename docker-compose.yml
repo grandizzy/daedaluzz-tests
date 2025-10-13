@@ -1,0 +1,40 @@
+# docker-compose.yml
+services:
+  echidna:
+    build:
+      context: .
+      dockerfile: Dockerfile.echidna
+    container_name: daedaluzz-echidna
+    environment:
+      TASK: "1"
+      TIME_LIMIT: "100"
+      MAZE_NUMBER: "4"
+      SEED: ""
+    entrypoint: >
+      bash -c "./run-echidna.sh $${TASK} $${TIME_LIMIT} $${MAZE_NUMBER} $${SEED}"
+
+  foundry:
+    build:
+      context: .
+      dockerfile: Dockerfile.foundry
+    container_name: daedaluzz-foundry
+    environment:
+      TASK: "1"
+      TIME_LIMIT: "100"
+      MAZE_NUMBER: "4"
+      SEED: ""
+    entrypoint: >
+      bash -c ./run-foundry.sh $${TASK} $${TIME_LIMIT} $${MAZE_NUMBER} $${SEED}
+
+  ityfuzz:
+    build:
+      context: .
+      dockerfile: Dockerfile.ityfuzz
+    container_name: daedaluzz-ityfuzz
+    environment:
+      TASK: "1"
+      TIME_LIMIT: "100"
+      MAZE_NUMBER: "4"
+      SEED: ""
+    entrypoint: >
+      bash -c ./run-ityfuzz.sh $${TASK} $${TIME_LIMIT} $${MAZE_NUMBER} $${SEED}

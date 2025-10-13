@@ -1,0 +1,23 @@
+FROM ghcr.io/foundry-rs/foundry:v1.4.0
+
+# Install required tools
+USER root
+RUN apt-get update && \
+    apt-get install -y git curl unzip && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Clone daedaluzz
+RUN git clone https://github.com/ConsenSysDiligence/daedaluzz.git /daedaluzz
+
+# Copy our changed script into the image
+COPY updates/foundry/run-foundry.sh /daedaluzz/run-foundry.sh
+
+# Set working directory
+WORKDIR /daedaluzz
+
+# Make the script executable
+RUN chmod +x run-foundry.sh
+
+# Run the script with arguments
+CMD ["./run-foundry.sh", "1", "60", "4"]
+

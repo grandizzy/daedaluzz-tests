@@ -1,0 +1,46 @@
+FROM python:3.10-slim
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    bash \
+    python3 \
+    python3-pip \
+    build-essential \
+    ca-certificates \
+    libssl3 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install solc-select
+RUN pip install solc-select
+
+# Initialize solc-select (sets up paths and config)
+RUN solc-select install 0.8.19 && solc-select use 0.8.19
+
+# Add solc to PATH (if needed explicitly)
+ENV PATH="/root/.solc-select/bin:${PATH}"
+
+# Install ItyFuzz (installer uses bash and places binaries in ~/.ityfuzz)
+RUN curl -L https://ity.fuzz.land/ | bash && \
+    /root/.ityfuzz/bin/ityfuzzup || true
+
+# Add ItyFuzz to the PATH
+ENV PATH="/root/.ityfuzz/bin:$PATH"
+
+# Clone the daedaluzz repo
+RUN git clone https://github.com/ConsenSysDiligence/daedaluzz.git /daedaluzz
+
+# Copy our changed script into the image
+COPY updates/ityfuzz/run-ityfuzz.sh /daedaluzz/run-ityfuzz.sh
+
+# Set working directory
+WORKDIR /daedaluzz
+
+# Make the script executable
+RUN chmod +x run-ityfuzz.sh
+
+CMD ["./run-ityfuzz.sh", "1", "60", "4"]
+

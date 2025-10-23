@@ -1,0 +1,19 @@
+# Use official Python image
+FROM python:3.11-slim
+
+# Install matplotlib dependencies
+RUN apt-get update && apt-get install -y \
+    libfreetype6-dev \
+    libpng-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install matplotlib
+RUN pip install matplotlib
+
+# Copy your plotting script inside container
+COPY updates/plot_report.py /app/plot_report.py
+
+WORKDIR /app
+
+ENTRYPOINT ["python", "plot_report.py"]
+

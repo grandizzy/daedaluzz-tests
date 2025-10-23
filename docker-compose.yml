@@ -5,6 +5,8 @@ services:
       context: .
       dockerfile: Dockerfile.echidna
     container_name: daedaluzz-echidna
+    volumes:
+      - ./results:/daedaluzz/generated-mazes/results
     environment:
       TASK: "1"
       TIME_LIMIT: "100"
@@ -18,6 +20,8 @@ services:
       context: .
       dockerfile: Dockerfile.foundry
     container_name: daedaluzz-foundry
+    volumes:
+      - ./results:/daedaluzz/generated-mazes/results
     environment:
       TASK: "1"
       TIME_LIMIT: "100"
@@ -31,6 +35,8 @@ services:
       context: .
       dockerfile: Dockerfile.ityfuzz
     container_name: daedaluzz-ityfuzz
+    volumes:
+      - ./results:/daedaluzz/generated-mazes/results
     environment:
       TASK: "1"
       TIME_LIMIT: "100"
@@ -38,3 +44,12 @@ services:
       SEED: ""
     entrypoint: >
       bash -c ./run-ityfuzz.sh $${TASK} $${TIME_LIMIT} $${MAZE_NUMBER} $${SEED}
+
+  reports:
+    build:
+      context: .
+      dockerfile: Dockerfile.reports
+    container_name: daedaluzz-reports
+    volumes:
+      - ./results:/data
+    command: ["/data"]
